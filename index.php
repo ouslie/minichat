@@ -1,12 +1,22 @@
 <?php
 
 include("db.php");
+if (isset($_POST['submit']))
+{
+	$req = $bdd->prepare('INSERT INTO messages(pseudo, mess, datepublication) VALUES(:pseudo, :mess, :datepublication)');
+	$datepub = date("Y-m-d H:i:s");
+	$req->execute(array(
+		'pseudo' => $_POST['pseudo'],
+		'mess' => $_POST['message'],
+		'datepublication' => $datepub
+		));
+}
 
 ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-	<title>Contact V3</title>
+	<title>Minichat OpenClassroom</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->
@@ -31,13 +41,13 @@ include("db.php");
 	<div class="bg-contact3" style="background-image: url('images/bg-01.jpg');">
 		<div class="container-contact3">
 			<div class="wrap-contact3">
-				<form class="contact3-form validate-form" href="subform.php">
+				<form class="contact3-form validate-form" method="post">
 					<span class="contact3-form-title">
 						Mini tchat OpenClassroom
 					</span>		
 
-					<div class="wrap-input3 validate-input" data-validate="Le nom est requis">
-						<input class="input3" type="text" name="name" placeholder="Votre nom">
+					<div class="wrap-input3 validate-input" data-validate="Le pseudo est requis">
+						<input class="input3" type="text" name="pseudo" placeholder="Votre pseudo">
 						<span class="focus-input3"></span>
 					</div>
 
@@ -47,7 +57,7 @@ include("db.php");
 					</div>
 
 					<div class="container-contact3-form-btn">
-						<button class="contact3-form-btn">
+						<button name="submit" class="contact3-form-btn">
 							Envoyer
 						</button>
 					</div>
@@ -57,6 +67,22 @@ include("db.php");
 				<span class="contact3-form-title">
 					Fil de messages
 				</span>	
+				<?php
+$reponse = $bdd->query('SELECT * FROM messages ORDER BY datepublication DESC LIMIT 0, 10');
+
+// Affichage de chaque message (toutes les données sont protégées par htmlspecialchars)
+while ($donnees = $reponse->fetch())
+{
+	echo '<p>Le '. htmlspecialchars($donnees['datepublication']) .' par 
+	<strong>' . htmlspecialchars($donnees['pseudo']) . '</strong> : 
+	' . htmlspecialchars($donnees['mess']) . '</p>';
+}
+
+$reponse->closeCursor();
+					?>
+
+
+
 			</div>
 		</div>
 			
@@ -71,13 +97,8 @@ include("db.php");
 	<script src="vendor/bootstrap/js/popper.js"></script>
 	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
 <!--===============================================================================================-->
-	<script src="vendor/select2/select2.min.js"></script>
-	<script>
-		$(".selection-2").select2({
-			minimumResultsForSearch: 20,
-			dropdownParent: $('#dropDownSelect1')
-		});
-	</script>
+	<script src="js/main.js"></script>
+
 <!--===============================================================================================-->
 </body>
 </html>
