@@ -81,7 +81,9 @@ $reponse = $bdd->query('SELECT * FROM messages ORDER BY datepublication DESC LIM
 // Affichage de chaque message (toutes les données sont protégées par htmlspecialchars)
 while ($donnees = $reponse->fetch())
 {
-	echo '<p>Le '. htmlspecialchars($donnees['datepublication']) .' par 
+	$date = date_create($donnees['datepublication']);
+	$date = date_format($date,'d-m-Y H:i:s');
+	echo '<p>Le '. $date .' par 
 	<strong>' . htmlspecialchars($donnees['pseudo']) . '</strong> : 
 	' . htmlspecialchars($donnees['mess']) . '</p> </br>';
 }
