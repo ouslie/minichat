@@ -1,8 +1,12 @@
 <?php
-
 include("db.php");
+session_start();
 if (isset($_POST['submit']))
 {
+	if(isset($_COOKIE))
+	{
+	 setcookie('pseudo',  $_POST['pseudo'], time() + 365*24*3600, null, null, false, true); 
+	}
 	$req = $bdd->prepare('INSERT INTO messages(pseudo, mess, datepublication) VALUES(:pseudo, :mess, :datepublication)');
 	$datepub = date("Y-m-d H:i:s");
 	$req->execute(array(
@@ -10,6 +14,9 @@ if (isset($_POST['submit']))
 		'mess' => $_POST['message'],
 		'datepublication' => $datepub
 		));
+	
+	header("Refresh:0");
+
 }
 
 ?>
@@ -47,7 +54,7 @@ if (isset($_POST['submit']))
 					</span>		
 
 					<div class="wrap-input3 validate-input" data-validate="Le pseudo est requis">
-						<input class="input3" type="text" name="pseudo" placeholder="Votre pseudo">
+						<input class="input3" type="text" name="pseudo" placeholder="Votre pseudo" value="<?php if(isset($_COOKIE['pseudo'])){echo $_COOKIE['pseudo'];}?>">
 						<span class="focus-input3"></span>
 					</div>
 
@@ -67,6 +74,7 @@ if (isset($_POST['submit']))
 				<span class="contact3-form-title">
 					Fil de messages
 				</span>	
+				<div class="contenumessage">
 				<?php
 $reponse = $bdd->query('SELECT * FROM messages ORDER BY datepublication DESC LIMIT 0, 10');
 
@@ -75,17 +83,15 @@ while ($donnees = $reponse->fetch())
 {
 	echo '<p>Le '. htmlspecialchars($donnees['datepublication']) .' par 
 	<strong>' . htmlspecialchars($donnees['pseudo']) . '</strong> : 
-	' . htmlspecialchars($donnees['mess']) . '</p>';
+	' . htmlspecialchars($donnees['mess']) . '</p> </br>';
 }
 
 $reponse->closeCursor();
-					?>
-
-
+?>
+				</div>
 
 			</div>
-		</div>
-			
+		</div>			
 	</div>
 
 

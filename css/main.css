@@ -159,8 +159,13 @@ iframe {
   overflow: hidden;
   padding: 72px 55px 65px 55px;
   margin: 0px 0px 0px 50px;
-}
+  max-height: 600px;
 
+}
+.contenumessage {
+  overflow: auto;
+  max-height: 600px;
+}
 
 /*------------------------------------------------------------------
 [  ]*/
